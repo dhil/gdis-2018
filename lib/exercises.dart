@@ -4,7 +4,7 @@ import 'src/pairing_graph.dart';
 
 highlightPickySuits() {
   for (var suit in allSuits) {
-    if (edgeCount(suit) <= 1) {
+    if (edgeCount(suit) == 1 || edgeCount(suit) == 2) {
       highlight(suit);
     }
   }
@@ -14,7 +14,11 @@ highlightPickySuits() {
 
 highlightPopularDresses() {
   for (var dress in allDresses) {
-    // your code here
+    if (edgeCount(dress) >= allDresses.length / 2) {
+      highlight(dress);
+    } else {
+      dim(dress);
+    }
   }
 }
 
@@ -31,7 +35,13 @@ highlightRivalsOfFirstSuit() {
 }
 
 highlightRivalsOfFirstDress() {
-  // your code here
+  for (var suit in suitsAvailableFor(firstDress)) {
+    for (var dress in dressesAvailableFor(suit)) {
+      if (dress != firstDress) {
+        highlight(dress);
+      }
+    }
+  }
 }
 
 // Exercise 6
@@ -46,14 +56,19 @@ highlightDressAndFriends(dress) {
   if (isNotHighlighted(dress)) {
     highlight(dress);
     for (var suit in suitsAvailableFor(dress)) {
-      // your code here
+      highlightSuitAndFriends(suit);
     }
   }
 }
 
 /// Highlight the given suit and all friends, if not already done.
 highlightSuitAndFriends(suit) {
-  // your code here
+  if (isNotHighlighted(suit)) {
+    highlight(suit);
+    for (var dress in dressesAvailableFor(suit)) {
+      highlightDressAndFriends(dress);
+    }
+  }
 }
 
 // Exercises 7 and 8
@@ -75,7 +90,32 @@ canFindChain() {
 }
 
 /// Is there a path to an unpaired dress from the given suit?
+// canFindUnpairedDressFrom(suit) {
+//   for (var dress in dressesAvailableFor(suit)) {
+//     if (isNotPaired(dress) || canFindUnpairedDressFrom(suitPairedWith(dress))) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
+
+// Exercise 8
 canFindUnpairedDressFrom(suit) {
-  return replace_by_your_solution(suit);
+  for (var dress in dressesAvailableFor(suit)) {
+    if (isNotMarked(dress)) {
+      mark(dress);
+      if (isNotPaired(dress)) {
+        chain(edge(suit, dress));
+        return true;
+      } else {
+        if (canFindUnpairedDressFrom(suitPairedWith(dress))) {
+          chain(edge(dress, suitPairedWith(dress)));
+          chain(edge(suit, dress));
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 

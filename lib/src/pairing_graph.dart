@@ -2,7 +2,7 @@ import 'dart:math' show Random, min;
 import '../exercises.dart';
 
 /// Automated book-keeping.
-var markVisitedAutomatically = true;
+var markVisitedAutomatically = false;
 var collectChainAutomatically = false;
 var avoidRevisitingAutomatically = false;
 
